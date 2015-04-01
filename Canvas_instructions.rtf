@@ -1,0 +1,213 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1343\cocoasubrtf160
+{\fonttbl\f0\froman\fcharset0 Times-Roman;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red36\green36\blue36;\red240\green240\blue240;\red38\green38\blue38;
+\red242\green242\blue242;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\margl1440\margr1440\vieww13240\viewh12860\viewkind0
+\deftab720
+\pard\pardeftab720
+
+\f0\fs28 \cf2 \expnd0\expndtw0\kerning0
+So far, we\'92ve been drawing everything using exact coordinates. This is fine for a couple shapes but breaks down if you need to draw a bunch of objects.\
+Canvas2D allows you to translate (move), rotate, or scale objects.\
+\pard\pardeftab720
+
+\fs36 \cf2 \expnd0\expndtw0\kerning0
+Scaling\
+\pard\pardeftab720
+
+\f1\fs26 \cf2 \cb3 \expnd0\expndtw0\kerning0
+scale(x,y)
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ multiplies the x and y values by a given factor so\
+
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+ctx.scale(2,3);
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+will make all values twice as large on the x axis and three times as large on the y axis.\
+\pard\pardeftab720
+
+\fs36 \cf2 \expnd0\expndtw0\kerning0
+Translation\
+\pard\pardeftab720
+
+\f1\fs26 \cf2 \cb3 \expnd0\expndtw0\kerning0
+translate(x,y)
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ moves all subsequent draw commands by 
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+x
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ number of pixels on horizontally and 
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+y
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ pixels vertically.\
+
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+ctx.translate(20,40);
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ moves all elements drawn after it 20 pixels to the rights and 40 pixels down.\
+\pard\pardeftab720
+
+\fs36 \cf2 \expnd0\expndtw0\kerning0
+Rotation\
+\pard\pardeftab720
+
+\f1\fs26 \cf2 \cb3 \expnd0\expndtw0\kerning0
+ctx.rotate(angleRadians)
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ rotates an object a certain number of radians (generally) about its center. You probably may have learned about radians in school but here's a handy formula to convert a value from degrees to radians.\
+
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+radians = degrees * (Math.PI/180)
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+Don't ask us why everything in Computer Graphics uses radians. We have no idea. :)\
+\pard\pardeftab720
+
+\fs36 \cf2 \expnd0\expndtw0\kerning0
+Order of operations\
+\pard\pardeftab720
+
+\fs28 \cf2 \expnd0\expndtw0\kerning0
+You should generally scale objects first, rotate them next, and then finally translate last. There are times when you'd want to rotate around an arbitrary point instead of an object's center, that's out of scope for this lesson.\
+It\'92s important to note that whatever transformations apply for all subsequent objects until you reverse them.\
+\
+Every canvas objects contains a stack of drawing states. Stacks are data structures that only let you push new items at one end. When you retrieve an item, it's the last item that was pushed or Last In-First Out(LIFO).\
+Let's see how this would work in code. Let's say you wanted to draw a couple rectangles in different colors. For this small example, we could get away with reassigning the 
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+fillStyle
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ each time instead of using 
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+save
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+ and 
+\f1\fs26 \cb3 \expnd0\expndtw0\kerning0
+restore
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+.\
+\pard\pardeftab720
+
+\f1\fs26 \cf4 \cb5 \expnd0\expndtw0\kerning0
+var c = document.querySelector("#c");\
+var ctx = c.getContext("2d");\
+\
+ctx.fillStyle = "blue";\
+ctx.fillRect(0,0,50,50);\
+\
+ctx.fillStyle = "green"\
+ctx.fillRect(100,100,10,10);\
+\
+ctx.fillStyle = "blue";\
+ctx.fillRect(200,10,20,20);\
+\pard\pardeftab720
+
+\f0\fs28 \cf2 \cb1 \expnd0\expndtw0\kerning0
+This is better.\
+\pard\pardeftab720
+
+\f1\fs26 \cf4 \cb5 \expnd0\expndtw0\kerning0
+var c = document.querySelector("#c");\
+var ctx = c.getContext("2d");\
+\
+ctx.fillStyle = "blue";\
+ctx.fillRect(0,0,50,50);\
+\
+// Save state with blue fill\
+ctx.save();\
+ctx.fillStyle = "green";\
+ctx.fillRect(100,100,10,10);\
+// Restore to blue fill\
+ctx.restore();\
+\
+ctx.fillRect(200,10,20,20);\
+\pard\pardeftab720
+
+\f0\fs28 \cf2 \cb1 \expnd0\expndtw0\kerning0
+The canvas state can store:\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0\cf2 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+The current transformation matrix (rotation, scaling, translation)\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0
+\f1\fs26 \cf2 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+strokeStyle
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+fillStyle
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+font
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+globalAlpha
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+lineWidth
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+lineCap
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+lineJoin
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+miterLimit
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+shadowOffsetX
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+shadowOffsetY
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+shadowBlur
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+shadowColor
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+globalCompositeOperation
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+textAlign
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\ls1\ilvl0
+\f1\fs26 \cb3 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+textBaseline
+\f0\fs28 \cb1 \expnd0\expndtw0\kerning0
+\
+\pard\tx220\tx720\pardeftab720\li720\fi-720
+\ls1\ilvl0\cf2 \kerning1\expnd0\expndtw0 {\listtext	\'95	}\expnd0\expndtw0\kerning0
+The current clipping region}
